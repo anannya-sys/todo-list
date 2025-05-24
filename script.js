@@ -114,37 +114,37 @@ class TaskManager {
                 }
             }
 
-            // renderTasks() {
-            //     const tasksDisplay = document.getElementById('tasksDisplay');
+            renderTasks() {
+                const tasksDisplay = document.getElementById('tasksDisplay');
                 
-            //     if (this.tasks.length === 0) {
-            //         tasksDisplay.innerHTML = `
-            //             <div class="empty-state">
-            //                 <div class="empty-state-icon">📋</div>
-            //                 <p>No tasks yet. Create your first task to get started!</p>
-            //             </div>
-            //         `;
-            //         return;
-            //     }
+                if (this.tasks.length === 0) {
+                    tasksDisplay.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <p>No tasks yet. Create your first task to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
 
-            //     tasksDisplay.innerHTML = this.tasks.map(task => `
-            //         <div class="task-item">
-            //             <div class="task-header">
-            //                 <div class="task-name">${task.name}</div>
-            //                 <div class="task-actions">
-            //                     <button class="edit-btn" onclick="taskManager.editTask(${task.id})">✏️ Edit</button>
-            //                     <button class="delete-btn" onclick="taskManager.deleteTask(${task.id})">🗑️ Delete</button>
-            //                 </div>
-            //             </div>
-            //             ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
-            //             <div style="margin-top: 10px; font-size: 0.8rem; color: #999;">
-            //                 Created: ${task.dateCreated} | Priority: ${task.priority}
-            //                 ${task.hasReminder ? ' | 🔔 Reminder' : ''}
-            //                 ${task.hasDate ? ' | 📅 Scheduled' : ''}
-            //             </div>
-            //         </div>
-            //     `).join('');
-            // }
+                tasksDisplay.innerHTML = this.tasks.map(task => `
+                    <div class="task-item">
+                        <div class="task-header">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-actions">
+                                <button class="edit-btn" onclick="taskManager.editTask(${task.id})">✏️ Edit</button>
+                                <button class="delete-btn" onclick="taskManager.deleteTask(${task.id})">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: #999;">
+                            Created: ${task.dateCreated} | Priority: ${task.priority}
+                            ${task.hasReminder ? ' | 🔔 Reminder' : ''}
+                            ${task.hasDate ? ' | 📅 Scheduled' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
 
             updateTaskCount() {
                 document.getElementById('taskCount').textContent = this.tasks.length;
