@@ -57,18 +57,18 @@
             transition: all 0.3s ease;
         }
 
-        .task-form:hover {
+        /* .task-form:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
+        } */
 
-        .form-title {
+        /* .form-title {
             font-size: 1.4rem;
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 25px;
             text-align: center;
-        }
+        } */
 
         .input-group {
             margin-bottom: 20px;
@@ -113,7 +113,7 @@
 
         #description:focus {
             outline: none;
-            /* border-color: #e78c8c; */
+            border-color: #e78c8c;
             border-color: linear-gradient(#e66465, #9198e5);
             box-shadow: 0 0 0 3px rgba(231, 140, 140, 0.1);
         }
@@ -159,14 +159,14 @@
             gap: 15px;
         }
 
-        .tag {
+        /* .tag {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 500;
-        }
+        } */
 
         .actions {
             display: flex;
@@ -189,10 +189,10 @@
             border: 2px solid #e9ecef;
         }
 
-        .cancel-btn:hover {
+        /* .cancel-btn:hover {
             background: #e9ecef;
             transform: translateY(-1px);
-        }
+        } */
 
         .add-btn {
             background: linear-gradient(135deg, #e78c8c, #f0a0a0);
@@ -200,10 +200,10 @@
             box-shadow: 0 4px 15px rgba(231, 140, 140, 0.3);
         }
 
-        .add-btn:hover {
+        /* .add-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(231, 140, 140, 0.4);
-        }
+        } */
 
         .tasks-container {
             background: white;
@@ -248,11 +248,11 @@
             position: relative;
         }
 
-        .task-item:hover {
+        /* .task-item:hover {
             transform: translateX(5px);
             border-color: #e78c8c;
             background: #fff;
-        }
+        } */
 
         .task-header {
             display: flex;
@@ -320,7 +320,7 @@
             margin-bottom: 15px;
         }
 
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
                 gap: 20px;
@@ -340,4 +340,4 @@
             .actions {
                 justify-content: center;
             }
-        }
+        } */
