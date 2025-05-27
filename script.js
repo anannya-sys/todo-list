@@ -1,29 +1,15 @@
 class TaskManager {
-    constructor() {
-        this.tasks = [];
-        this.currentEditId = null;
-        this.initializeEventListeners();
-    }
-
-    initializeEventListeners() {
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('active');
-            });
-        });
+    constructor() { // method used within a class to initialize objects
+        this.tasks = [];  // i am going to a store the word "I" refers to whoever is speaking. Similarly, when your code says this.tasks, it means "the tasks array belonging to whichever TaskManager instance is currently running this code
+        this.completedTasks = [];
     }
 
     addTask() {
-        const taskName = document.getElementById('taskName').value.trim();
+        const taskName = document.getElementById('taskName').value.trim();  //used to select an HTML element by its id attribute can also be selected by class 
         const description = document.getElementById('description').value.trim();
-
+        
         if (!taskName) {
-            alert('Please enter a task title');
-            return;
-        }
-
-        if (this.currentEditId !== null) {
-            this.updateTask();
+            alert('Please enter a task name'); //  sends a prompts a pop-up alerting the user of any major changes 
             return;
         }
 
@@ -31,221 +17,126 @@ class TaskManager {
             id: Date.now(),
             name: taskName,
             description: description,
-            dateCreated: new Date().toLocaleDateString(),
-            priority: document.getElementById('priorityBtn').classList.contains('active') ? 'High' : 'Normal',
-            hasReminder: document.getElementById('reminderBtn').classList.contains('active'),
-            hasDate: document.getElementById('dateBtn').classList.contains('active')
+            dateCreated: new Date().toLocaleDateString(), // this is an object has a key value pair
+            completed: false
         };
 
         this.tasks.push(task);
-        this.renderTasks();
-        this.clearForm();
+        this.showTasks();
+        this.clearForm(); 
         this.updateTaskCount();
-
-        const addBtn = document.querySelector('.add-btn');
-        const originalText = addBtn.textContent;
-        addBtn.textContent = '✅ Added!';
-        setTimeout(() => {
-            addBtn.textContent = originalText;
-        }, 1500);
+        this.showSuccessMessage();
     }
 
-    editTask(id) {
-        const task = this.findTask(id);
-        if (!task) return;
-
-        document.getElementById('taskName').value = task.name;
-        document.getElementById('description').value = task.description;
-        
-        this.setButtonState('priorityBtn', task.priority === 'High');
-        this.setButtonState('reminderBtn', task.hasReminder);
-        this.setButtonState('dateBtn', task.hasDate);
-
-        this.currentEditId = id;
-        
-        const addBtn = document.querySelector('.add-btn');
-        addBtn.textContent = 'Update Task';
-        addBtn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
-
-        document.querySelector('.task-form').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    updateTask() {
-        const taskIndex = this.findTaskIndex(this.currentEditId);
-        if (taskIndex === -1) return;
-
-        const taskName = document.getElementById('taskName').value.trim();
-        const description = document.getElementById('description').value.trim();
-
-        if (!taskName) {
-            alert('Please enter a task title');
-            return;
+    completeTask(id) {
+        const taskIndex = this.tasks.findIndex(task => task.id === id);
+        if (taskIndex !== -1) {
+            const task = this.tasks[taskIndex];
+            task.completed = true;
+            task.completedDate = new Date().toLocaleDateString();//date is in milliseconds and the next buitin function converts it to a normal readable date 
+            
+            this.completedTasks.push(task);
+            this.tasks.splice(taskIndex, 1);
+            this.showTasks();
+            this.updateTaskCount();
         }
-
-        this.tasks[taskIndex] = {
-            ...this.tasks[taskIndex],
-            name: taskName,
-            description: description,
-            priority: document.getElementById('priorityBtn').classList.contains('active') ? 'High' : 'Normal',
-            hasReminder: document.getElementById('reminderBtn').classList.contains('active'),
-            hasDate: document.getElementById('dateBtn').classList.contains('active')
-        };
-
-        this.renderTasks();
-        this.clearForm();
-        this.currentEditId = null;
-
-        const addBtn = document.querySelector('.add-btn');
-        addBtn.textContent = 'Add Task';
-        addBtn.style.background = 'linear-gradient(135deg, #e78c8c, #f0a0a0)';
     }
+    
 
     deleteTask(id) {
-        if (confirm('Are you sure you want to delete this task?')) {
+        if (confirm('Delete this task?')) {
             this.tasks = this.tasks.filter(task => task.id !== id);
-            this.renderTasks();
+            this.showTasks();
             this.updateTaskCount();
-            
-            if (this.currentEditId === id) {
-                this.clearForm();
-                this.currentEditId = null;
-            }
         }
     }
 
-    renderTasks() {
+    showTasks() {
         const tasksDisplay = document.getElementById('tasksDisplay');
         
         if (this.tasks.length === 0) {
             tasksDisplay.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state-icon">📋</div>
-                    <p>No tasks yet. Create your first task to get started!</p>
+                    <p>📋 No tasks yet! Add one to get started.</p>
                 </div>
             `;
             return;
         }
 
-        tasksDisplay.innerHTML = this.createTasksHTML();
-    }
-
-    createTasksHTML() {
-        let html = '';
+        let html = '<h3>Active Tasks</h3>';
         for (let i = 0; i < this.tasks.length; i++) {
-            const task = this.tasks[i];
-            html += this.createTaskHTML(task);
-        }
-        return html;
-    }
-
-    createTaskHTML(task) {
-        return `
-            <div class="task-item">
-                <div class="task-header">
-                    <div class="task-name">${task.name}</div>
+            const task = this.tasks[i]; // backticks(button below your escape key on a laptops) are used as literals used to include variables in between JS strings used when u have to include some ones name or detaiils in between a standard string 
+            html += `
+                <div class="task-item">
+                    <div class="task-content">
+                        <div class="task-name">${task.name}</div>
+                        ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                        <div class="task-date">Created: ${task.dateCreated}</div>
+                    </div>
                     <div class="task-actions">
-                        <button class="edit-btn" onclick="taskManager.editTask(${task.id})">✏️ Edit</button>
-                        <button class="delete-btn" onclick="taskManager.deleteTask(${task.id})">🗑️ Delete</button>
+                        <button class="complete-btn" onclick="taskManager.completeTask(${task.id})">✓ Complete</button>
+                        <button class="delete-btn" onclick="taskManager.deleteTask(${task.id})">✗ Delete</button>
                     </div>
                 </div>
-                ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
-                <div style="margin-top: 10px; font-size: 0.8rem; color: #999;">
-                    Created: ${task.dateCreated} | Priority: ${task.priority}
-                    ${task.hasReminder ? ' | 🔔 Reminder' : ''}
-                    ${task.hasDate ? ' | 📅 Scheduled' : ''}
-                </div>
-            </div>
-        `;
-    }
-
-    updateTaskCount() {
-        document.getElementById('taskCount').textContent = this.tasks.length;
+            `;
+        }
+        
+        if (this.completedTasks.length > 0) {// same as above used to create html tags to be added into the task list 
+            html += '<h3 style="margin-top: 20px;">Completed Tasks</h3>';
+            for (let i = 0; i < this.completedTasks.length; i++) {
+                const task = this.completedTasks[i];
+                html += `
+                    <div class="task-item completed">
+                        <div class="task-content">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-date">Completed: ${task.completedDate}</div>
+                        </div>
+                        <button class="delete-btn" onclick="taskManager.deleteCompletedTask(${task.id})">Remove</button>
+                    </div>
+                `;
+            }
+        }
+        
+        tasksDisplay.innerHTML = html;
     }
 
     clearForm() {
-        document.getElementById('taskName').value = '';
-        document.getElementById('description').value = '';
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        this.currentEditId = null;
-        
-        const addBtn = document.querySelector('.add-btn');
-        addBtn.textContent = 'Add Task';
-        addBtn.style.background = 'linear-gradient(135deg, #e78c8c, #f0a0a0)';
-    }
-
-    findTask(id) {
-        for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].id === id) {
-                return this.tasks[i];
-            }
-        }
-        return null;
-    }
-
-    findTaskIndex(id) {
-        for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].id === id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    setButtonState(buttonId, isActive) {
-        const button = document.getElementById(buttonId);
-        if (isActive) {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
+        document.getElementById('taskName').value = ''; // set the value to null or zero (both have different meaning in JS but in this case for understanding purpose you can se it that way)
+        if (document.getElementById('description')) {
+            document.getElementById('description').value = '';
         }
     }
 
-    getAllTasks() {
-        return [...this.tasks];
-    }
-
-    getTaskById(id) {
-        return this.findTask(id);
-    }
-
-    searchTasks(query) {
-        const results = [];
-        const searchQuery = query.toLowerCase();
-        
-        for (let i = 0; i < this.tasks.length; i++) {
-            const task = this.tasks[i];
-            if (task.name.toLowerCase().includes(searchQuery) || 
-                task.description.toLowerCase().includes(searchQuery)) {
-                results.push(task);
-            }
+    updateTaskCount() {
+        const countElement = document.getElementById('taskCount');//for the total number of elements in task list 
+        if (countElement) {
+            countElement.textContent = this.tasks.length;
         }
-        
-        return results;
     }
 
-    filterTasksByPriority(priority) {
-        const results = [];
-        
-        for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].priority === priority) {
-                results.push(this.tasks[i]);
-            }
+    showSuccessMessage() {
+        const addBtn = document.querySelector('.add-btn'); // for the add button 
+        if (addBtn) {
+            const originalText = addBtn.textContent;
+            addBtn.textContent = '✓ Added!';
+            setTimeout(() => { // stops execution of JS main thread for sometime and 5000 here is a arg to be passed and changed as u wish it is in ms also lookup event loop in js is u are curious 
+                addBtn.textContent = originalText;
+            }, 5000);
         }
-        
-        return results;
+    }
+
+    deleteCompletedTask(id) {
+        this.completedTasks = this.completedTasks.filter(task => task.id !== id);// filters elements based on task id to check if the are complete dor not 
+        this.showTasks();
+    }
+
+
+    getTotalTasks() {
+        return this.tasks.length + this.completedTasks.length;// pretty much clear what this does 
     }
 }
 
-const taskManager = new TaskManager();
 
-function clearForm() {
-    taskManager.clearForm();
-}
+const taskManager = new TaskManager(); // calls the constructor and every function inside it 
 
-setInterval(() => {
-    if (taskManager.tasks.length > 0) {
-        console.log('Auto-saving tasks...', taskManager.tasks.length, 'tasks');
-    }
-}, 30000);
+// there is a simpler but slightly complicated  (with event listners )way to do this without using classes and constructers i chose this way because you all would feel familiar with classes and objects since you guys jus studied tha stuff 
